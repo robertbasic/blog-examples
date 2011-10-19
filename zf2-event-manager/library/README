@@ -1,0 +1,3 @@
+Symlink/copy zf2 here
+
+ln -s /var/www/zf2/library/Zend/ ./Zend
