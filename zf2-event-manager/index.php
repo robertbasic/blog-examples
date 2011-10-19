@@ -15,35 +15,33 @@ $autoLoader->register();
 // register the Zend namespace
 $autoLoader->registerNamespace('Zend', ZF2_PATH);
 
-class ValidateFoo
+class ValidatePost
 {
-    public function isValid($event)
+    public function validate($event)
     {
         $data = $event->getParams();
         
-        if (count($data) != 5) {
-            throw new \InvalidArgumentException('You need to pass an array with 5 elements!');
+        if (!isset($data['title']) or !isset($data['slug'])) {
+            throw new \InvalidArgumentException('Need a title and a slug!');
         }
         
         return $data;
     }
 }
 
-class MangleFoo
+class SlugifyPost
 {
-    public function mangle($event)
+    public function slugify($event)
     {
         $data = $event->getParams();
         
-        foreach ($data as $key => $value) {
-            $event->setParam($key, $value * 2);
-        }
+        $event->setParam('slug', strtolower(str_replace(' ', '-', $data['title'])));
         
         return $data;
     }
 }
 
-class Foo
+class Post
 {
     protected $events = null;
     
@@ -52,8 +50,8 @@ class Foo
         if ($this->events === null) {
             $this->events = new EventManager(__CLASS__);
             
-            $this->events->attach('save', array('MangleFoo', 'mangle'), 100);
-            $this->events->attach('save', array('ValidateFoo', 'isValid'), 90);
+            $this->events->attach('save', array('SlugifyPost', 'slugify'), 100);
+            $this->events->attach('save', array('ValidatePost', 'validate'), 90);
         }
         
         return $this->events;
@@ -71,12 +69,14 @@ class Foo
     }
 }
 
-$foo = new Foo;
+$post = new Post;
 
-$values = array(1, 2, 3, 4, 5);
+$values = array(
+    'title' => 'My post'
+);
 
 try {
-    $foo->save($values);
+    $post->save($values);
 } catch(\InvalidArgumentException $e) {
     echo $e->getMessage();
 }
