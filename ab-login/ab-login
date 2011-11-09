@@ -1,0 +1,16 @@
+#!/bin/bash
+
+COOKIE_JAR="/tmp/ab-login-cookie-jar"
+
+echo "Logging in..."
+
+curl -c $COOKIE_JAR -d username=user -d password=h4x0r http://example.com/login
+
+echo "Getting the session id..."
+PHPSESSID=$(cat $COOKIE_JAR | grep PHPSESSID | cut -f 7)
+
+echo "The session id is:"
+echo $PHPSESSID
+echo "=================="
+
+ab -n 10 -c 10 -C PHPSESSID=$PHPSESSID http://example.com/loggedin
