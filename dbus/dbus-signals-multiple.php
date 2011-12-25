@@ -13,7 +13,12 @@ do {
     $signal = $dbus->waitLoop(1000);
     
     if ($signal instanceof DbusSignal) {
-        $data = $signal->getData()->getData();
+        $data = $signal->getData();
+        
+        if (method_exists($data, 'getData')) {
+            $data = $data->getData();
+        }
+        
         // filtering out multiple signals
         if ($signal->matches($interface, $methodIm)) {
             echo "Got stuff via IM!\n";
