@@ -29,7 +29,7 @@ do {
              */
             $data = $signal->getData()->getData();
             
-            $reciever = $data[0];
+            $receiver = $data[0];
             $sender = $data[1];
             $message = $data[2];
             $conversation = $data[3];
@@ -38,8 +38,8 @@ do {
             
             // 2034 is *my* account's number, yours will be different
             // 3681 is the account number from which *I* accept messages
-            if ($reciever == 2034 && $proxy->PurpleAccountIsConnected($reciever)
-                    && $proxy->PurpleFindBuddy($reciever, $sender) == 3681) {
+            if ($receiver == 2034 && $proxy->PurpleAccountIsConnected($receiver)
+                    && $proxy->PurpleFindBuddy($receiver, $sender) == 3681) {
                 
                 switch ($message) {
                     case 'hi': {
